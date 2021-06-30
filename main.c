@@ -6,7 +6,7 @@
 /*   By: lbrandy <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:47:58 by lbrandy           #+#    #+#             */
-/*   Updated: 2021/06/20 17:10:51 by lbrandy          ###   ########.fr       */
+/*   Updated: 2021/06/30 15:57:55 by lbrandy          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,21 +67,20 @@ int	check_repeats(int numeric, int mass[], int limit)
 	return (1);
 }
 
-int	fill_stack(t_num *stack_b, char *str[], int num)
+int	fill_stack(t_stacks *stacks, char *str[], int num)
 {
-	int i;
 	int mass[num];
 	int numeric;
 
-	i = 1;
-	while (i < num)
+	stacks->top_b = 0;
+	while (stacks->top_b < num - 1)
 	{
-		numeric = ft_atoi(str[i]);
-		mass[i - 1] = numeric;
-		if (check_repeats(numeric, mass, i) == 0)
+		numeric = ft_atoi(str[stacks->top_b + 1]);
+		mass[stacks->top_b] = numeric;
+		if (check_repeats(numeric, mass, stacks->top_b + 1) == 0)
 			return (0);
-		stack_b[i - 1].numeric = numeric;
-		i++;
+		stacks->stack_b[stacks->top_b].numeric = numeric;
+		stacks->top_b++;
 	}
 	return (1);
 }
@@ -135,6 +134,14 @@ void	indexing(t_num *stack_b, int num)
 	}
 }
 
+void	start(t_stacks *stacks, int num)
+{
+	stacks->top_a = 0;
+	stacks->stack_a = (t_num *)malloc(sizeof(t_num) * num);
+	while (stacks->top_b > 0)
+		pa(stacks);
+	markup_index(stacks->stack_a, stacks->top_a);
+}
 
 int main(int argc, char *argv[])
 {
@@ -148,14 +155,17 @@ int main(int argc, char *argv[])
 	stacks->stack_b = (t_num *)malloc(sizeof(t_num) * argc);
 	if (!stacks->stack_b)
 		return (2);
-	if (fill_stack(stacks->stack_b, argv, argc) == 0)
+	if (fill_stack(stacks, argv, argc) == 0)
 		return (2);
-	int i = 0;
+	int i = argc - 2;
 	indexing(stacks->stack_b, argc);
-	while (i < argc - 1)
+	start(stacks, argc);
+	while (i >= 0)
 	{
-		printf("number is %d index is %d\n", stacks->stack_b[i].numeric, stacks->stack_b[i].index);
-		i++;
+		printf("%d				%d				%d\n", 
+				stacks->stack_a[i].numeric, stacks->stack_a[i].index, stacks->stack_a[i].keep_in_stack);
+		i--;
 	}
+	printf("top_a - %d, top_b - %d\n", stacks->top_a, stacks->top_b);
 	return (0);
 }
