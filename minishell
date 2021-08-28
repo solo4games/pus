@@ -1,0 +1,114 @@
+// minishell.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+//
+
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+
+char* ft_substr(char const* s, unsigned int start, size_t len)
+{
+    char* temp;
+    size_t	i;
+
+    if (!s)
+        return (NULL);
+    temp = (char*)malloc((len + 1) * sizeof(char));
+    if (start > strlen(s))
+        len = 0;
+    i = 0;
+    if (!temp)
+        return (NULL);
+    while (i < len && s[start + i])
+    {
+        temp[i] = s[start + i];
+        i++;
+    }
+    temp[i] = '\0';
+    return (temp);
+}
+
+void ft_skip_space(char *str, int* i)
+{
+    while (str[*i] == ' ' || str[*i] == '\t')
+    {
+        if (str[*i] == ' ')
+            (*i)++;
+        if (str[*i] == '\t')
+            (*i) += 4;
+    }
+}
+
+char* ft_take_str(char* str, int* i)
+{
+    int j;
+
+    j = *i;
+    char* str;//чекнуть ч делает баш в данном случае, когда пробел сидит в двойных или в одинарных ковычках
+    while (str[*i])
+    {
+        if (!(str[*i] == ' ' && (str[*i - 1] == '\'' || str[*i - 1] == '\"')
+            && (str[*i + 1] == '\'' || str[*i + 1] == '\"')))
+            break;
+        i++;
+    }
+    str = ft_substr(str, j, *i - j - 1);
+    return (str);
+}
+
+char** ft_check_razdel(char* str)
+{
+    int i;
+    int count;
+    int j;
+
+    count = 0;
+    i = -1;
+    int len = strlen(str);
+    while (str[++i])
+    {
+        if (i == 0)
+            ft_skip_space(str, &i);
+        if (i != len - 1)
+            if (!(str[i] == ' ' && (str[i - 1] == '\'' || str[i - 1] == '\"')
+                && (str[i + 1] == '\'' || str[i + 1] == '\"')))
+            {
+                count++;
+                ft_skip_space(str, &i);
+            }
+    }
+    char** mass = (char**)malloc(sizeof(char*) * (count + 1));
+    i = -1;
+    j = 0;
+    while (str[++i])
+    {
+        if (i == 0)
+            ft_skip_space(str, &i);
+        if (i != len - 1)
+            if (!(str[i] == ' ' && (str[i - 1] == '\'' || str[i - 1] == '\"')
+                && (str[i + 1] == '\'' || str[i + 1] == '\"')))
+            {
+                ft_skip_space(str, &i);
+                mass[j] = ft_take_str(str, &i);
+                j++;
+            }
+    }
+    return (mass);
+}
+
+int main(int argc, char **argv, char **env)
+{
+    int i = -1;
+
+    std::cout << "Hello World!\n";
+}
+
+// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
+// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+
+// Советы по началу работы 
+//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
+//   2. В окне Team Explorer можно подключиться к системе управления версиями.
+//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
+//   4. В окне "Список ошибок" можно просматривать ошибки.
+//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
+//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
